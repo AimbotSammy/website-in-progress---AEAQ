@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="images/favicon-aeaq.png">
+<title>AEAQ : Choisissez votre voie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  @property --t{
+    syntax:'<number>';
+    inherits:true;
+    initial-value:100;
+  }
+  :root{
+    --red:#c3202d;
+    --blue:#2064c3;
+    --ink:#101012;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--ink);
+    color:#fff;
+    overflow:hidden;
+  }
+  h1,h2,.headline{ font-family:'Oswald',sans-serif; margin:0; }
+
+  .masthead{
+    position:fixed;
+    top:0; left:0; right:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    padding:20px 16px 14px;
+    z-index:40;
+    pointer-events:none;
+  }
+  .badge{
+    width:50px; height:50px;
+    border-radius:50%;
+    background:conic-gradient(var(--red) 0deg 180deg, var(--blue) 180deg 360deg);
+    box-shadow:0 0 0 2px rgba(255,255,255,0.5);
+  }
+  .masthead p{
+    font-size:12.5px;
+    letter-spacing:0.02em;
+    color:rgba(255,255,255,0.9);
+    margin:0;
+    font-weight:500;
+    text-shadow:0 1px 6px rgba(0,0,0,0.6);
+  }
+
+  .stage{
+    position:relative;
+    width:100vw;
+    height:100vh;
+    --t:100;
+    transition:--t 750ms cubic-bezier(.2,.8,.2,1);
+  }
+  .stage:has(.panel-formation:hover){ --t:122; }
+  .stage:has(.panel-services:hover){ --t:78; }
+
+  .panel{
+    position:absolute;
+    inset:0;
+    width:100vw;
+    height:100vh;
+    text-decoration:none;
+    color:#fff;
+    display:block;
+  }
+
+  /* diagonal seam from bottom-left corner to top-right corner, shiftable via --t */
+  .panel-formation{
+    clip-path: polygon(0% 0%, calc(var(--t) * 1%) 0%, calc((var(--t) - 100) * 1%) 100%, 0% 100%);
+  }
+  .panel-services{
+    clip-path: polygon(calc(var(--t) * 1%) 0%, 100% 0%, 100% 100%, calc((var(--t) - 100) * 1%) 100%);
+  }
+
+  .photo{
+    position:absolute; inset:0;
+    width:100vw; height:100vh;
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
+    filter:grayscale(1) contrast(1.08) brightness(0.85);
+  }
+  .panel-formation .photo{ background-image:url('images/formation.jpg'); background-color:var(--red); }
+  .panel-services .photo{ background-image:url('images/services.jpg'); background-color:var(--blue); }
+
+  .tint{
+    position:absolute; inset:0;
+    width:100vw; height:100vh;
+    mix-blend-mode:color;
+    background-attachment:fixed;
+  }
+  .panel-formation .tint{ background:var(--red); }
+  .panel-services .tint{ background:var(--blue); }
+
+  .wash{
+    position:absolute; inset:0;
+    width:100vw; height:100vh;
+    background-attachment:fixed;
+    opacity:0.28;
+    mix-blend-mode:multiply;
+  }
+  .panel-formation .wash{ background:var(--red); }
+  .panel-services .wash{ background:var(--blue); }
+
+  .content{
+    position:absolute;
+    width:min(600px, 84vw);
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    padding:22px 24px;
+    background:rgba(10,10,12,0.42);
+    z-index:10;
+  }
+  .panel-formation .content{ top:18%; left:8%; align-items:center; text-align:center; }
+  .panel-services .content{ bottom:14%; right:8%; align-items:center; text-align:center; }
+
+  .content img.mark{ height:105px; width:auto; filter:brightness(0) invert(1); align-self:center; }
+  .content .headline{ font-size:clamp(24px,2.6vw,34px); line-height:1.12; font-weight:600; }
+  .content p{ font-size:14.5px; line-height:1.5; color:rgba(255,255,255,0.92); margin:0; }
+
+  .cta{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 22px;
+    border:1.5px solid rgba(255,255,255,0.9);
+    color:#fff;
+    font-weight:600;
+    font-size:14px;
+    background:transparent;
+    transition:background 220ms ease, color 220ms ease;
+  }
+  .panel-formation .cta:hover{ background:#fff; color:var(--red); }
+  .panel-services .cta:hover{ background:#fff; color:var(--blue); }
+  .chev{ width:8px; height:8px; border-right:2px solid currentColor; border-bottom:2px solid currentColor; transform:rotate(-45deg); }
+
+  .side-tag{
+    position:absolute;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.04em;
+    color:rgba(255,255,255,0.85);
+    text-shadow:0 1px 6px rgba(0,0,0,0.5);
+    z-index:10;
+  }
+  .panel-formation .side-tag{ top:4%; left:4%; }
+  .panel-services .side-tag{ bottom:4%; right:4%; }
+
+  @media (max-width:760px){
+    body{ overflow-y:auto; }
+    .stage{ height:auto; min-height:100vh; --t:100 !important; transition:none; }
+    .stage:has(.panel-formation:hover), .stage:has(.panel-services:hover){ --t:100; }
+    .panel{ position:relative; width:100%; height:56vh; clip-path:none !important; }
+    .photo, .tint, .wash{ position:absolute; width:100%; height:100%; background-attachment:scroll; }
+    .content{ position:absolute; width:88vw; padding:18px 20px; }
+    .panel-formation .content{ top:auto; bottom:16px; left:6vw; align-items:flex-start; text-align:left; }
+    .panel-services .content{ bottom:16px; right:6vw; align-items:flex-end; text-align:right; }
+    .masthead{ padding-top:14px; }
+    .content img.mark{ height:34px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="masthead">
+    <div class="badge"></div>
+    <p>Académie d'esthétique automobile du Québec</p>
+  </div>
+
+  <div class="stage">
+    <a class="panel panel-formation" href="formation.html#calendrier">
+      <div class="photo"></div>
+      <div class="tint"></div>
+      <div class="wash"></div>
+      <span class="side-tag">(438) 609-6699 #1</span>
+      <div class="content">
+        <img class="mark" src="assets2/logo-red-new.png" alt="AEAQ Formation">
+        <p>Formation</p>
+        <h1 class="headline">Devenez technicien certifié en esthétique automobile</h1>
+        <p>Formation intensive et 80&nbsp;% pratique à Chambly : nettoyage, correction de peinture, coating céramique et wetsanding enseignés par des experts de l'industrie.</p>
+        <span class="cta">Prendre rendez-vous <span class="chev"></span></span>
+      </div>
+    </a>
+
+    <a class="panel panel-services" href="services.html#calendrier">
+      <div class="photo"></div>
+      <div class="tint"></div>
+      <div class="wash"></div>
+      <span class="side-tag">(438) 609-6699 #2</span>
+      <div class="content">
+        <img class="mark" src="assets2/logo-blue-new.png" alt="AEAQ Services">
+        <p>Services</p>
+        <h1 class="headline">Confiez votre véhicule à nos experts</h1>
+        <p>Les mêmes techniques enseignées à nos élèves, appliquées par nos professionnels incluant les projets d'exception&nbsp;: bateaux, VR et véhicules spécialisés.</p>
+        <span class="cta">Prendre rendez-vous <span class="chev"></span></span>
+      </div>
+    </a>
+  </div>
+
+</body>
+</html>
